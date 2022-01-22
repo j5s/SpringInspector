@@ -1,4 +1,4 @@
-package org.sec.anno;
+package org.sec.log;
 
 import java.lang.annotation.*;
 

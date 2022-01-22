@@ -1,10 +1,11 @@
-package org.sec.anno;
+package org.sec.log;
 
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -14,6 +15,7 @@ import java.util.jar.JarInputStream;
 public class SLF4JProcessor {
     private static final String PACKAGE_NAME = "org.sec";
     private static final String LOGGER_NAME = "logger";
+    private static final String LOG_CLASS = "org.sec.log.Log";
 
     @SuppressWarnings("all")
     private static List<Class<?>> getClassesInPackage(String packageName) throws Exception {
@@ -52,14 +54,26 @@ public class SLF4JProcessor {
         return classes;
     }
 
+    static void setFinalStatic(Field field, Object newValue) throws Exception {
+        field.setAccessible(true);
+        Field modifiersField = Field.class.getDeclaredField("modifiers");
+        modifiersField.setAccessible(true);
+        modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+        field.set(null, newValue);
+    }
+
     public static void process() {
         try {
             List<Class<?>> classes = getClassesInPackage(PACKAGE_NAME);
             for (Class<?> clazz : classes) {
                 if (clazz.getAnnotation(SLF4J.class) != null) {
-                    Field field = clazz.getDeclaredField(LOGGER_NAME);
-                    field.setAccessible(true);
-                    field.set(null, LoggerFactory.getLogger(clazz));
+                    Class<?>[] interfaces = clazz.getInterfaces();
+                    for (Class<?> _interface : interfaces) {
+                        if (_interface.getName().equals(LOG_CLASS)) {
+                            Field field = _interface.getField(LOGGER_NAME);
+                            setFinalStatic(field, LoggerFactory.getLogger(clazz));
+                        }
+                    }
                 }
             }
         } catch (Exception e) {
