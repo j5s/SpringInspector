@@ -37,6 +37,10 @@ public class DiscoveryClassVisitor extends ClassVisitor {
         super.visit(version, access, name, signature, superName, interfaces);
     }
 
+    public String getName(){
+        return this.name;
+    }
+
     @Override
     public AnnotationVisitor visitAnnotation(String descriptor, boolean visible) {
         annotations.add(descriptor);

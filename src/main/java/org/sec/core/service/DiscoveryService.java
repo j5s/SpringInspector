@@ -21,13 +21,15 @@ public class DiscoveryService {
                              List<ClassReference> discoveredClasses,
                              List<MethodReference> discoveredMethods,
                              Map<ClassReference.Handle, ClassReference> classMap,
-                             Map<MethodReference.Handle, MethodReference> methodMap) {
+                             Map<MethodReference.Handle, MethodReference> methodMap,
+                             Map<String, ClassFile> classFileByName) {
         logger.info("start discovery information");
         for (ClassFile file : classFileList) {
             try {
                 DiscoveryClassVisitor dcv = new DiscoveryClassVisitor(discoveredClasses, discoveredMethods);
                 ClassReader cr = new ClassReader(file.getFile());
                 cr.accept(dcv, ClassReader.EXPAND_FRAMES);
+                classFileByName.put(dcv.getName(), file);
             } catch (Exception e) {
                 e.printStackTrace();
             }
