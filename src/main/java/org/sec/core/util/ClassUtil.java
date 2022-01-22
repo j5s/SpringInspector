@@ -32,6 +32,20 @@ public class ClassUtil {
         return new ArrayList<>(classFileSet);
     }
 
+    public static List<ClassFile> getAllClassesFromBoots(List<String> bootPathList,
+                                                         boolean runtime,
+                                                         boolean useAllLib) {
+        logger.info("get all classes");
+        Set<ClassFile> classFileSet = new HashSet<>();
+        if (runtime) {
+            getRuntime(classFileSet);
+        }
+        for (String jarPath : bootPathList) {
+            classFileSet.addAll(JarUtil.resolveSpringBootJarFile(jarPath, useAllLib));
+        }
+        return new ArrayList<>(classFileSet);
+    }
+
     private static void getRuntime(Set<ClassFile> classFileSet) {
         logger.info("get classes from rj.jar");
         String rtJarPath = System.getenv("JAVA_HOME") +

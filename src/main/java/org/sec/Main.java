@@ -12,6 +12,7 @@ public class Main {
 
     public static void main(String[] args) {
         SLF4JProcessor.process();
+        logger.info("start spring inspector");
         Application.run(args);
     }
 }
