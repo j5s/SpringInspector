@@ -6,49 +6,48 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Objects;
-import java.util.jar.JarEntry;
-import java.util.jar.JarInputStream;
 
 public class SLF4JProcessor {
     private static final String PACKAGE_NAME = "org.sec";
     private static final String LOGGER_NAME = "logger";
-    private static final String LOG_CLASS = "org.sec.log.Log";
 
     @SuppressWarnings("all")
-    private static List<Class<?>> getClassesInPackage(String packageName) throws Exception {
-        String path = packageName.replace(".", "/");
+    private static List<Class<?>> getClasses(String packageName) throws Exception {
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        assert classLoader != null;
+        String path = packageName.replace('.', '/');
+        Enumeration<URL> resources = classLoader.getResources(path);
+        List<File> dirs = new ArrayList<File>();
+        while (resources.hasMoreElements()) {
+            URL resource = resources.nextElement();
+            dirs.add(new File(resource.getFile()));
+        }
+        ArrayList<Class<?>> classes = new ArrayList<>();
+        for (File directory : dirs) {
+            classes.addAll(findClasses(directory, packageName));
+        }
+        return classes;
+    }
+
+    private static List<Class<?>> findClasses(File directory, String packageName)
+            throws ClassNotFoundException {
         List<Class<?>> classes = new ArrayList<>();
-        String[] classPathEntries = System.getProperty("java.class.path").split(
-                System.getProperty("path.separator")
-        );
-        String name;
-        for (String classpathEntry : classPathEntries) {
-            if (classpathEntry.endsWith(".jar")) {
-                File jar = new File(classpathEntry);
-                JarInputStream is = new JarInputStream(new FileInputStream(jar));
-                JarEntry entry;
-                while ((entry = is.getNextJarEntry()) != null) {
-                    name = entry.getName();
-                    if (name.endsWith(".class")) {
-                        if (name.contains(path) && name.endsWith(".class")) {
-                            String classPath = name.substring(0, entry.getName().length() - 6);
-                            classPath = classPath.replace("/", ".");
-                            classes.add(Class.forName(classPath));
-                        }
-                    }
-                }
-            } else {
-                File base = new File(classpathEntry + "/" + path);
-                for (File file : Objects.requireNonNull(base.listFiles())) {
-                    name = file.getName();
-                    if (name.endsWith(".class")) {
-                        name = name.substring(0, name.length() - 6);
-                        classes.add(Class.forName(packageName + "." + name));
-                    }
-                }
+        if (!directory.exists()) {
+            return classes;
+        }
+        File[] files = directory.listFiles();
+        for (File file : Objects.requireNonNull(files)) {
+            if (file.isDirectory()) {
+                assert !file.getName().contains(".");
+                classes.addAll(findClasses(file, packageName + "." + file.getName()));
+            } else if (file.getName().endsWith(".class")) {
+                classes.add(Class.forName(packageName + '.'
+                        + file.getName().substring(0, file.getName().length() - 6)));
             }
         }
         return classes;
@@ -64,16 +63,11 @@ public class SLF4JProcessor {
 
     public static void process() {
         try {
-            List<Class<?>> classes = getClassesInPackage(PACKAGE_NAME);
+            List<Class<?>> classes = getClasses(PACKAGE_NAME);
             for (Class<?> clazz : classes) {
                 if (clazz.getAnnotation(SLF4J.class) != null) {
-                    Class<?>[] interfaces = clazz.getInterfaces();
-                    for (Class<?> _interface : interfaces) {
-                        if (_interface.getName().equals(LOG_CLASS)) {
-                            Field field = _interface.getField(LOGGER_NAME);
-                            setFinalStatic(field, LoggerFactory.getLogger(clazz));
-                        }
-                    }
+                    Field field = clazz.getDeclaredField(LOGGER_NAME);
+                    setFinalStatic(field, LoggerFactory.getLogger(clazz));
                 }
             }
         } catch (Exception e) {

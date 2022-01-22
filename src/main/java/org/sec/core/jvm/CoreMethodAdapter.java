@@ -1,4 +1,4 @@
-package org.sec.jvm;
+package org.sec.core.jvm;
 
 import org.objectweb.asm.*;
 import org.objectweb.asm.commons.AnalyzerAdapter;

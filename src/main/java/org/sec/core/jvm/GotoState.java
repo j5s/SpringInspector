@@ -1,4 +1,4 @@
-package org.sec.jvm;
+package org.sec.core.jvm;
 
 @SuppressWarnings("all")
 public class GotoState<T> {

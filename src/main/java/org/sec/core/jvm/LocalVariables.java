@@ -1,4 +1,4 @@
-package org.sec.jvm;
+package org.sec.core.jvm;
 
 import java.util.ArrayList;
 import java.util.HashSet;

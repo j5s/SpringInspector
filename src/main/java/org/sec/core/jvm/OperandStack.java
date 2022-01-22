@@ -1,4 +1,4 @@
-package org.sec.jvm;
+package org.sec.core.jvm;
 
 import java.util.HashSet;
 import java.util.LinkedList;
