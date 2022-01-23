@@ -14,7 +14,7 @@ import java.util.Set;
 
 @SLF4J
 public class MethodCallService {
-    @SuppressWarnings("all")
+    
     private static Logger logger;
 
     public static void start(List<ClassFile> classFileList,

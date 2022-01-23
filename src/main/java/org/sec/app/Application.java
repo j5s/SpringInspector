@@ -67,7 +67,7 @@ public class Application {
      */
     private static final Map<MethodReference.Handle, Set<CallGraph>> graphCallMap = new HashMap<>();
 
-    @SuppressWarnings("all")
+
     private static Logger logger;
 
     public static void run(String[] args) {

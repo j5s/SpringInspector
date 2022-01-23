@@ -9,7 +9,7 @@ import java.util.List;
 
 @SLF4J
 public class DirUtil {
-    @SuppressWarnings("all")
+    
     private static Logger logger;
     private static final List<String> filenames = new ArrayList<>();
 

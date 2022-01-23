@@ -14,7 +14,7 @@ import java.util.Map;
 
 @SLF4J
 public class DiscoveryService {
-    @SuppressWarnings("all")
+    
     private static Logger logger;
 
     public static void start(List<ClassFile> classFileList,

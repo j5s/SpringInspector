@@ -15,10 +15,7 @@ import java.util.*;
 public class CoreMethodAdapter<T> extends MethodVisitor {
     private final AnalyzerAdapter analyzerAdapter;
     private final int access;
-    private final String name;
     private final String desc;
-    private final String signature;
-    private final String[] exceptions;
 
     private final Map<Label, GotoState<T>> gotoStates = new HashMap<>();
     private final Set<Label> exceptionHandlerLabels = new HashSet<>();
@@ -26,15 +23,12 @@ public class CoreMethodAdapter<T> extends MethodVisitor {
     protected OperandStack<T> operandStack;
     protected LocalVariables<T> localVariables;
 
-    public CoreMethodAdapter(final int api, final MethodVisitor mv, final String owner, int access,
-                             String name, String desc, String signature, String[] exceptions) {
+    public CoreMethodAdapter(final int api, final MethodVisitor mv, final String owner,
+                             int access, String name, String desc) {
         super(api, new AnalyzerAdapter(owner, access, name, desc, mv));
         this.analyzerAdapter = (AnalyzerAdapter) this.mv;
         this.access = access;
-        this.name = name;
         this.desc = desc;
-        this.signature = signature;
-        this.exceptions = exceptions;
         operandStack = new OperandStack<>();
         localVariables = new LocalVariables<>();
     }

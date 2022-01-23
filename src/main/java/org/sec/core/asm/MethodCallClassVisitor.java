@@ -9,7 +9,7 @@ import org.sec.model.MethodReference;
 import java.util.Map;
 import java.util.Set;
 
-@SuppressWarnings("all")
+
 public class MethodCallClassVisitor extends ClassVisitor {
     private String name = null;
     private final Map<MethodReference.Handle, Set<MethodReference.Handle>> methodCalls;
@@ -27,10 +27,6 @@ public class MethodCallClassVisitor extends ClassVisitor {
             throw new IllegalStateException("ClassVisitor already visited a class!");
         }
         this.name = name;
-    }
-
-    public Map<MethodReference.Handle, Set<MethodReference.Handle>> getMethodCalls() {
-        return this.methodCalls;
     }
 
     @Override

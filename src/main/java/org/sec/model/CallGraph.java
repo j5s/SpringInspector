@@ -2,7 +2,7 @@ package org.sec.model;
 
 import java.util.Objects;
 
-@SuppressWarnings("all")
+
 public class CallGraph {
     private final MethodReference.Handle callerMethod;
     private final MethodReference.Handle targetMethod;

@@ -16,13 +16,13 @@ public class SLF4JProcessor {
     private static final String PACKAGE_NAME = "org.sec";
     private static final String LOGGER_NAME = "logger";
 
-    @SuppressWarnings("all")
+    
     private static List<Class<?>> getClasses(String packageName) throws Exception {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         assert classLoader != null;
         String path = packageName.replace('.', '/');
         Enumeration<URL> resources = classLoader.getResources(path);
-        List<File> dirs = new ArrayList<File>();
+        List<File> dirs = new ArrayList<>();
         while (resources.hasMoreElements()) {
             URL resource = resources.nextElement();
             dirs.add(new File(resource.getFile()));

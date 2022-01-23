@@ -8,7 +8,7 @@ import java.util.*;
 
 @SLF4J
 public class SortService {
-    @SuppressWarnings("all")
+
     private static Logger logger;
 
     public static List<MethodReference.Handle> start(
@@ -29,8 +29,8 @@ public class SortService {
     }
 
     private static void dfsSort(Map<MethodReference.Handle, Set<MethodReference.Handle>> outgoingReferences,
-                               List<MethodReference.Handle> sortedMethods, Set<MethodReference.Handle> visitedNodes,
-                               Set<MethodReference.Handle> stack, MethodReference.Handle node) {
+                                List<MethodReference.Handle> sortedMethods, Set<MethodReference.Handle> visitedNodes,
+                                Set<MethodReference.Handle> stack, MethodReference.Handle node) {
         if (stack.contains(node)) {
             return;
         }

@@ -1,6 +1,6 @@
 package org.sec.core.jvm;
 
-@SuppressWarnings("all")
+
 public class GotoState<T> {
     private LocalVariables<T> localVariables;
     private OperandStack<T> operandStack;

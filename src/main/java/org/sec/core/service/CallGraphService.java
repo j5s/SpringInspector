@@ -13,7 +13,7 @@ import java.util.*;
 
 @SLF4J
 public class CallGraphService {
-    @SuppressWarnings("all")
+    
     private static Logger logger;
 
     public static void start(Set<CallGraph> discoveredCalls,

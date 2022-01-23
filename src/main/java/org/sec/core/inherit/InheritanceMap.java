@@ -4,7 +4,7 @@ import org.sec.model.ClassReference;
 
 import java.util.*;
 
-@SuppressWarnings("all")
+
 public class InheritanceMap {
     /**
      * 子类 -> 所有父类

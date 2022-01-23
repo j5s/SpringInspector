@@ -10,7 +10,7 @@ import java.util.Map;
 
 @SLF4J
 public class InheritanceService {
-    @SuppressWarnings("all")
+    
     private static Logger logger;
 
     public static InheritanceMap start(Map<ClassReference.Handle, ClassReference> classMap) {

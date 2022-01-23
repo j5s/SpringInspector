@@ -12,7 +12,6 @@ import org.sec.model.MethodReference;
 import java.util.Set;
 
 
-@SuppressWarnings("all")
 public class CallGraphMethodAdapter extends CoreMethodAdapter<String> {
     private final Set<CallGraph> discoveredCalls;
     private final String owner;
@@ -21,9 +20,9 @@ public class CallGraphMethodAdapter extends CoreMethodAdapter<String> {
     private final String desc;
 
     public CallGraphMethodAdapter(final int api, Set<CallGraph> discoveredCalls,
-                                  final MethodVisitor mv, final String owner, int access, String name, String desc,
-                                  String signature, String[] exceptions) {
-        super(api, mv, owner, access, name, desc, signature, exceptions);
+                                  final MethodVisitor mv, final String owner,
+                                  int access, String name, String desc) {
+        super(api, mv, owner, access, name, desc);
         this.owner = owner;
         this.access = access;
         this.name = name;

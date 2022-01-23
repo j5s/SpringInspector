@@ -8,7 +8,7 @@ import java.io.OutputStream;
 
 @SLF4J
 public class IOUtil {
-    @SuppressWarnings("all")
+    
     private static Logger logger;
 
     public static void copy(InputStream inputStream, OutputStream outputStream) {
