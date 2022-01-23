@@ -1,9 +1,11 @@
 package org.sec.app;
 
 import com.beust.jcommander.JCommander;
+import org.checkerframework.checker.units.qual.C;
 import org.sec.core.inherit.InheritanceMap;
 import org.sec.core.inherit.InheritanceUtil;
 import org.sec.core.service.*;
+import org.sec.core.spring.SpringController;
 import org.sec.core.util.ClassUtil;
 import org.sec.data.Output;
 import org.sec.log.SLF4J;
@@ -17,6 +19,10 @@ import java.util.*;
 
 @SLF4J
 public class Application {
+    /**
+     * CLASS FILE LIST
+     */
+    private static final List<ClassFile> classFileList = new ArrayList<>();
     /**
      * ALL CLASS INFO
      */
@@ -66,6 +72,10 @@ public class Application {
      * METHOD NAME -> CALL GRAPHS
      */
     private static final Map<MethodReference.Handle, Set<CallGraph>> graphCallMap = new HashMap<>();
+    /**
+     * SPRING CONTROLLERS
+     */
+    private static final List<SpringController> controllers = new ArrayList<>();
 
 
     private static Logger logger;
@@ -111,20 +121,20 @@ public class Application {
     }
 
     private static void start(Command command) {
-        List<ClassFile> classFileList = new ArrayList<>();
-        getClassFileList(command, classFileList);
-        discovery(classFileList);
+        getClassFileList(command);
+        discovery();
         inherit();
-        methodCall(classFileList);
+        methodCall();
         sort(command);
         buildCallGraphs(command);
+        parseSpring(command);
         if (command.module == null || command.module.equals("")) {
             logger.warn("no module selected");
         }
         logger.info("delete temp dirs...");
     }
 
-    private static void getClassFileList(Command command, List<ClassFile> classFileList) {
+    private static void getClassFileList(Command command) {
         if (command.springBoot) {
             classFileList.addAll(ClassUtil.getAllClassesFromBoots(command.jars, command.jdk, command.lib));
         } else {
@@ -132,7 +142,7 @@ public class Application {
         }
     }
 
-    private static void discovery(List<ClassFile> classFileList) {
+    private static void discovery() {
         DiscoveryService.start(classFileList, discoveredClasses, discoveredMethods,
                 classMap, methodMap, classFileByName);
         logger.info("total classes: " + discoveredClasses.size());
@@ -145,7 +155,7 @@ public class Application {
         methodImpls.putAll(InheritanceUtil.getAllMethodImplementations(inheritanceMap, methodMap));
     }
 
-    private static void methodCall(List<ClassFile> classFileList) {
+    private static void methodCall() {
         MethodCallService.start(classFileList, methodCalls);
     }
 
@@ -161,6 +171,12 @@ public class Application {
                 classMap, graphCallMap, methodMap, methodImpls);
         if (command.isDebug) {
             Output.writeTargetCallGraphs(graphCallMap, command.packageName);
+        }
+    }
+
+    private static void parseSpring(Command command) {
+        if (command.springBoot) {
+            SpringService.start(classFileList, command.packageName, controllers, classMap, methodMap);
         }
     }
 }
