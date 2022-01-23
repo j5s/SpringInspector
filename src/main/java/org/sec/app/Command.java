@@ -11,6 +11,9 @@ public class Command {
     @Parameter(description = "Scan Jar File")
     public List<String> jars;
 
+    @Parameter(names = {"--package"}, description = "SpringBoot Package Name")
+    public String packageName;
+
     @Parameter(names = {"-m", "--module"}, description = "Use Module")
     public String module;
 
@@ -23,6 +26,6 @@ public class Command {
     @Parameter(names = {"--springboot"}, description = "SpringBoot Jar File")
     public boolean springBoot;
 
-    @Parameter(names = {"--all"},description = "Use All Libs")
+    @Parameter(names = {"--all"}, description = "Use All Libs")
     public boolean lib;
 }

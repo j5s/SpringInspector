@@ -3,12 +3,11 @@ package org.sec.app;
 import com.beust.jcommander.JCommander;
 import org.sec.core.inherit.InheritanceMap;
 import org.sec.core.inherit.InheritanceUtil;
-import org.sec.core.service.DiscoveryService;
-import org.sec.core.service.InheritanceService;
-import org.sec.core.service.MethodCallService;
-import org.sec.core.service.SortService;
+import org.sec.core.service.*;
 import org.sec.core.util.ClassUtil;
+import org.sec.data.Output;
 import org.sec.log.SLF4J;
+import org.sec.model.CallGraph;
 import org.sec.model.ClassFile;
 import org.sec.model.ClassReference;
 import org.sec.model.MethodReference;
@@ -59,6 +58,14 @@ public class Application {
      * SORTED METHODS
      */
     private static List<MethodReference.Handle> sortedMethods;
+    /**
+     * CALL GRAPHS
+     */
+    private static final Set<CallGraph> discoveredCalls = new HashSet<>();
+    /**
+     * METHOD NAME -> CALL GRAPHS
+     */
+    private static final Map<MethodReference.Handle, Set<CallGraph>> graphCallMap = new HashMap<>();
 
     @SuppressWarnings("all")
     private static Logger logger;
@@ -89,6 +96,9 @@ public class Application {
         if (command.springBoot) {
             System.out.println("> Use SpringBoot Jar");
         }
+        if (command.packageName != null && !command.packageName.equals("")) {
+            System.out.println("> Package Name: " + command.packageName);
+        }
         if (command.jdk) {
             System.out.println("> Use rj.jar Lib");
         }
@@ -106,7 +116,8 @@ public class Application {
         discovery(classFileList);
         inherit();
         methodCall(classFileList);
-        sort();
+        sort(command);
+        buildCallGraphs(command);
         if (command.module == null || command.module.equals("")) {
             logger.warn("no module selected");
         }
@@ -138,7 +149,18 @@ public class Application {
         MethodCallService.start(classFileList, methodCalls);
     }
 
-    private static void sort() {
+    private static void sort(Command command) {
         sortedMethods = SortService.start(methodCalls);
+        if (command.isDebug) {
+            Output.writeSortedMethod(sortedMethods);
+        }
+    }
+
+    private static void buildCallGraphs(Command command) {
+        CallGraphService.start(discoveredCalls, sortedMethods, classFileByName,
+                classMap, graphCallMap, methodMap, methodImpls);
+        if (command.isDebug) {
+            Output.writeTargetCallGraphs(graphCallMap, command.packageName);
+        }
     }
 }
