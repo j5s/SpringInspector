@@ -17,17 +17,11 @@ import java.util.Set;
 
 @SLF4J
 public class Output {
-    
+
     private static Logger logger;
 
-    public static void writeTargetCallGraphs(Map<MethodReference.Handle, Set<CallGraph>> graphCallMap,
-                                             String packageName) {
-        logger.info("write call graphs data");
-        if (packageName == null || packageName.equals("")) {
-            logger.error("need package name config");
-            return;
-        }
-        packageName = packageName.replace(".", "/");
+    private static String getCallGraph(Map<MethodReference.Handle, Set<CallGraph>> graphCallMap,
+                                      String packageName) {
         StringBuilder sb = new StringBuilder();
         for (Map.Entry<MethodReference.Handle, Set<CallGraph>> item : graphCallMap.entrySet()) {
             if (item.getKey().getClassReference().getName().startsWith(packageName)) {
@@ -47,8 +41,20 @@ public class Output {
                 }
             }
         }
+        return sb.toString();
+    }
+
+    public static void writeTargetCallGraphs(Map<MethodReference.Handle, Set<CallGraph>> graphCallMap,
+                                             String packageName) {
+        logger.info("write call graphs data");
+        if (packageName == null || packageName.equals("")) {
+            logger.error("need package name config");
+            return;
+        }
+        packageName = packageName.replace(".", "/");
         try {
-            Files.write(Paths.get("calls.txt"), sb.toString().getBytes(StandardCharsets.UTF_8));
+            Files.write(Paths.get("calls.txt"),
+                    getCallGraph(graphCallMap, packageName).getBytes(StandardCharsets.UTF_8));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -70,17 +76,17 @@ public class Output {
         }
     }
 
-    public static void writeControllers(List<SpringController> controllers){
+    public static void writeControllers(List<SpringController> controllers) {
         logger.info("write spring controllers");
         StringBuilder sb = new StringBuilder();
-        for (SpringController controller:controllers) {
+        for (SpringController controller : controllers) {
             sb.append(controller.getClassReference().getName());
             sb.append("\n");
-            for(SpringMapping mapping:controller.getMappings()){
+            for (SpringMapping mapping : controller.getMappings()) {
                 sb.append("\t");
                 sb.append(mapping.getMethodName().getName());
                 sb.append("\t");
-                for(SpringParam param:mapping.getParamMap()){
+                for (SpringParam param : mapping.getParamMap()) {
                     sb.append(param.getReqName());
                     sb.append("->");
                     sb.append(param.getParamName());

@@ -8,10 +8,7 @@ import org.sec.core.spring.SpringController;
 import org.sec.core.util.ClassUtil;
 import org.sec.data.Output;
 import org.sec.log.SLF4J;
-import org.sec.model.CallGraph;
-import org.sec.model.ClassFile;
-import org.sec.model.ClassReference;
-import org.sec.model.MethodReference;
+import org.sec.model.*;
 import org.slf4j.Logger;
 
 import java.util.*;
@@ -126,6 +123,8 @@ public class Application {
         sort(command);
         buildCallGraphs(command);
         parseSpring(command);
+        List<Chain> chains = new ArrayList<>();
+        ChainService.start(chains,controllers,discoveredCalls,graphCallMap,classMap,methodMap);
         if (command.module == null || command.module.equals("")) {
             logger.warn("no module selected");
         }

@@ -68,6 +68,7 @@ public class SpringMethodAdapter extends MethodVisitor {
         Type[] argTypes = Type.getArgumentTypes(this.desc);
         for (int i = 0; i < argTypes.length; i++) {
             this.requestParam.get(i).setParamType(argTypes[i].getClassName());
+            this.requestParam.get(i).setParamIndex(i);
         }
         super.visitCode();
     }
