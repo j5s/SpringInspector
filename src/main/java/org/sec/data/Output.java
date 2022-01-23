@@ -1,5 +1,8 @@
 package org.sec.data;
 
+import org.sec.core.spring.SpringController;
+import org.sec.core.spring.SpringMapping;
+import org.sec.core.spring.SpringParam;
 import org.sec.log.SLF4J;
 import org.sec.model.CallGraph;
 import org.sec.model.MethodReference;
@@ -62,6 +65,35 @@ public class Output {
         }
         try {
             Files.write(Paths.get("sorted.txt"), sb.toString().getBytes(StandardCharsets.UTF_8));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void writeControllers(List<SpringController> controllers){
+        logger.info("write spring controllers");
+        StringBuilder sb = new StringBuilder();
+        for (SpringController controller:controllers) {
+            sb.append(controller.getClassReference().getName());
+            sb.append("\n");
+            for(SpringMapping mapping:controller.getMappings()){
+                sb.append("\t");
+                sb.append(mapping.getMethodName().getName());
+                sb.append("\t");
+                for(SpringParam param:mapping.getParamMap()){
+                    sb.append(param.getReqName());
+                    sb.append("->");
+                    sb.append(param.getParamName());
+                    sb.append(" ");
+                    sb.append(param.getParamType());
+                    sb.append(" ");
+                }
+                sb.append("\n");
+            }
+            sb.append("\n");
+        }
+        try {
+            Files.write(Paths.get("controllers.txt"), sb.toString().getBytes(StandardCharsets.UTF_8));
         } catch (Exception e) {
             e.printStackTrace();
         }

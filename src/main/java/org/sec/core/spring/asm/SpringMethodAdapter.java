@@ -94,6 +94,11 @@ public class SpringMethodAdapter extends MethodVisitor {
     @Override
     public void visitEnd() {
         if (currentMapping != null) {
+            this.requestParam.forEach(param -> {
+                if (param.getReqName() == null || param.getReqName().equals("")) {
+                    param.setReqName(param.getParamName());
+                }
+            });
             controller.addMapping(currentMapping);
         }
         super.visitEnd();

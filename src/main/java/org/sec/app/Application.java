@@ -1,7 +1,6 @@
 package org.sec.app;
 
 import com.beust.jcommander.JCommander;
-import org.checkerframework.checker.units.qual.C;
 import org.sec.core.inherit.InheritanceMap;
 import org.sec.core.inherit.InheritanceUtil;
 import org.sec.core.service.*;
@@ -96,7 +95,6 @@ public class Application {
         }
     }
 
-
     private static void printConfig(Command command) {
         System.out.print("> Jar File: ");
         for (String jarFile : command.jars) {
@@ -177,6 +175,9 @@ public class Application {
     private static void parseSpring(Command command) {
         if (command.springBoot) {
             SpringService.start(classFileList, command.packageName, controllers, classMap, methodMap);
+            if(command.isDebug){
+                Output.writeControllers(controllers);
+            }
         }
     }
 }
