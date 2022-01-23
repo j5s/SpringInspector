@@ -48,6 +48,7 @@ public class CallGraphMethodAdapter extends CoreMethodAdapter<String> {
     }
 
     @Override
+    @SuppressWarnings("all")
     public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
         Type[] argTypes = Type.getArgumentTypes(desc);
         if (opcode != Opcodes.INVOKESTATIC) {

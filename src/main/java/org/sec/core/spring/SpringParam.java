@@ -1,5 +1,6 @@
 package org.sec.core.spring;
 
+@SuppressWarnings("all")
 public class SpringParam {
     private int paramIndex;
     private String paramName;

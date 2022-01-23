@@ -5,6 +5,7 @@ import org.sec.model.ClassReference;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("all")
 public class SpringController {
     private boolean isRest;
     private ClassReference.Handle className;

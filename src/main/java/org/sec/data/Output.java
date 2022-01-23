@@ -16,12 +16,13 @@ import java.util.Map;
 import java.util.Set;
 
 @SLF4J
+@SuppressWarnings("all")
 public class Output {
 
     private static Logger logger;
 
     private static String getCallGraph(Map<MethodReference.Handle, Set<CallGraph>> graphCallMap,
-                                      String packageName) {
+                                       String packageName) {
         StringBuilder sb = new StringBuilder();
         for (Map.Entry<MethodReference.Handle, Set<CallGraph>> item : graphCallMap.entrySet()) {
             if (item.getKey().getClassReference().getName().startsWith(packageName)) {

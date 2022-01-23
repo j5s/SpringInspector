@@ -15,7 +15,7 @@ public class SLF4JProcessor {
     private static final String PACKAGE_NAME = "org.sec";
     private static final String LOGGER_NAME = "logger";
 
-    
+    @SuppressWarnings("all")
     private static List<Class<?>> getClasses(String packageName) throws Exception {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         assert classLoader != null;

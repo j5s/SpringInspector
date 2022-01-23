@@ -64,10 +64,12 @@ public class MethodReference {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             Handle handle = (Handle) o;
-            if (!Objects.equals(classReference, handle.classReference))
+            if (!Objects.equals(classReference, handle.classReference)) {
                 return false;
-            if (!Objects.equals(name, handle.name))
+            }
+            if (!Objects.equals(name, handle.name)) {
                 return false;
+            }
             return Objects.equals(desc, handle.desc);
         }
 

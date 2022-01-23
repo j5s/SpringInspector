@@ -44,18 +44,9 @@ public class Application {
      */
     private static final Map<String, ClassFile> classFileByName = new HashMap<>();
     /**
-     * CLASS NAME -> ALL METHODS IN CLASS
-     */
-    private static final Map<ClassReference.Handle, Set<MethodReference.Handle>> methodsByClass = new HashMap<>();
-    /**
      * METHOD NAME -> ALL METHOD IMPLS
      */
     private static final Map<MethodReference.Handle, Set<MethodReference.Handle>> methodImpls = new HashMap<>();
-    /**
-     * CLASS -> ALL SUPER CLASSES
-     * CLASS -> ALL SUB CLASSES
-     */
-    private static InheritanceMap inheritanceMap;
     /**
      * SORTED METHODS
      */
@@ -72,7 +63,10 @@ public class Application {
      * SPRING CONTROLLERS
      */
     private static final List<SpringController> controllers = new ArrayList<>();
-
+    /**
+     * RESULTS
+     */
+    private static final List<ResultInfo> resultInfos = new ArrayList<>();
 
     private static Logger logger;
 
@@ -123,11 +117,18 @@ public class Application {
         sort(command);
         buildCallGraphs(command);
         parseSpring(command);
-        List<Chain> chains = new ArrayList<>();
-        ChainService.start(chains,controllers,discoveredCalls,graphCallMap,classMap,methodMap);
         if (command.module == null || command.module.equals("")) {
             logger.warn("no module selected");
+        } else {
+            String module = command.module.toUpperCase(Locale.ROOT);
+            if (module.contains("SSRF")) {
+                SSRFService.start(classFileByName, controllers, graphCallMap);
+                resultInfos.addAll(SSRFService.getResults());
+            } else {
+                logger.error("error module");
+            }
         }
+        System.out.println("total data: " + resultInfos.size());
         logger.info("delete temp dirs...");
     }
 
@@ -147,8 +148,7 @@ public class Application {
     }
 
     private static void inherit() {
-        inheritanceMap = InheritanceService.start(classMap);
-        methodsByClass.putAll(InheritanceUtil.getMethodsByClass(methodMap));
+        InheritanceMap inheritanceMap = InheritanceService.start(classMap);
         methodImpls.putAll(InheritanceUtil.getAllMethodImplementations(inheritanceMap, methodMap));
     }
 
@@ -174,7 +174,7 @@ public class Application {
     private static void parseSpring(Command command) {
         if (command.springBoot) {
             SpringService.start(classFileList, command.packageName, controllers, classMap, methodMap);
-            if(command.isDebug){
+            if (command.isDebug) {
                 Output.writeControllers(controllers);
             }
         }

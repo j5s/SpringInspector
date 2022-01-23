@@ -3,7 +3,6 @@ package org.sec.core.util;
 import org.sec.log.SLF4J;
 import org.sec.model.ClassFile;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.nio.file.Files;

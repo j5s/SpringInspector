@@ -5,6 +5,7 @@ import org.sec.model.MethodReference;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("all")
 public class SpringMapping {
     private boolean isRest;
     private SpringController controller;

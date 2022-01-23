@@ -17,7 +17,7 @@ import java.util.jar.JarInputStream;
 @SLF4J
 public class JarUtil {
     
-    private static Logger logger;
+    @SuppressWarnings("all")private static Logger logger;
     private static final Set<ClassFile> classFileSet = new HashSet<>();
 
     public static List<ClassFile> resolveNormalJarFile(String jarPath) {
