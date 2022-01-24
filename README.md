@@ -21,6 +21,7 @@
 - XML外部实体注入漏洞检测
 - 远程命令执行漏洞检测
 - 针对Java的拒绝服务漏洞检测
+- URL重定向漏洞检测
 
 ## 快速上手
 
@@ -28,7 +29,7 @@
 
 命令：`java -jar SpringInspector.jar cidemo.jar --springboot --package org.sec --module SSRF`
 
-将会扫描到以下四条链
+该工具扫描速度极快，只需要几秒，将会扫描到以下四条链
 
 ```text
 ......
@@ -153,5 +154,22 @@ Sink方法的参数有多种重载，已针对这些类型做处理（污点传�
 |  MAP DOS  |     Map map = new HashMap(int)     |
 
 检测说明：
+
 1. 其中的`RE DOS`模块曾发现某开源组件的`RE DOS`([参考文章](https://4ra1n.love/post/TVE_41PT3/))
 2. 如果传入的参数是`int`类型且作为数组或集合的初始化长度认为可能存在拒绝服务
+
+## URL重定向
+
+开启检测模块关键字：REDIRECT
+
+|       漏洞名        |                漏洞细节                |
+|:----------------:|:----------------------------------:|
+| SERVLET REDIRECT |       response.sendRedirect        |
+| SPRING REDIRECT  |      return "redirect://str"       |
+| SPRING REDIRECT  | new ModelAndView("redirect://str") |
+
+检测说明：
+
+1. 对于SPRING型，解决字符串拼接和包含`redirect://`问题
+2. 这里为了方便只分析了`Controller`层，实际中也大都在这里做重定向
+
