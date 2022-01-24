@@ -22,6 +22,7 @@
 - 远程命令执行漏洞检测
 - 针对Java的拒绝服务漏洞检测
 - URL重定向漏洞检测
+- 日志注入漏洞检测
 
 ## 快速上手
 
@@ -172,4 +173,22 @@ Sink方法的参数有多种重载，已针对这些类型做处理（污点传�
 
 1. 对于SPRING型，解决字符串拼接和包含`redirect://`问题
 2. 这里为了方便只分析了`Controller`层，实际中也大都在这里做重定向
+
+## LOG注入
+
+开启检测模块关键字：LOG
+
+|              Sink类              | Sink方法 |
+|:-------------------------------:|:------:|
+|        org/slf4j/Logger         |  log   |
+|        org/slf4j/Logger         | error  |
+|        org/slf4j/Logger         |  warn  |
+| org/apache/logging/log4j/Logger |  log   |
+| org/apache/logging/log4j/Logger | error  |
+| org/apache/logging/log4j/Logger |  warn  |
+
+检测说明：
+
+1. 关于日志注入的说明参考：[OWASP](https://owasp.org/www-community/attacks/Log_Injection)
+2. 需要处理可能存在的字符串拼接问题
 

@@ -7,13 +7,13 @@ import org.sec.core.jvm.CoreMethodAdapter;
 
 import java.util.Map;
 
-public class RCEMethodAdapter extends CoreMethodAdapter<Boolean> {
+public class LogMethodAdapter extends CoreMethodAdapter<Boolean> {
     private final int access;
     private final String desc;
     private final int methodArgIndex;
     private final Map<String, Boolean> pass;
 
-    public RCEMethodAdapter(int methodArgIndex, Map<String, Boolean> pass, int api, MethodVisitor mv,
+    public LogMethodAdapter(int methodArgIndex, Map<String, Boolean> pass, int api, MethodVisitor mv,
                             String owner, int access, String name, String desc) {
         super(api, mv, owner, access, name, desc);
         this.access = access;
@@ -54,22 +54,17 @@ public class RCEMethodAdapter extends CoreMethodAdapter<Boolean> {
 
     @Override
     public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
+        boolean toStringCondition = owner.equals("java/lang/StringBuilder") &&
+                name.equals("toString") &&
+                desc.equals("()Ljava/lang/String;");
         boolean buildStrCondition = owner.equals("java/lang/StringBuilder") &&
                 name.equals("append") &&
                 desc.equals("(Ljava/lang/String;)Ljava/lang/StringBuilder;");
 
-        boolean toStringCondition = owner.equals("java/lang/StringBuilder") &&
-                name.equals("toString") &&
-                desc.equals("()Ljava/lang/String;");
-
-        boolean runtimeCondition = owner.equals("java/lang/Runtime") && name.equals("exec") &&
-                desc.equals("(Ljava/lang/String;)Ljava/lang/Process;");
-        boolean processInitCondition = owner.equals("java/lang/ProcessBuilder") && name.equals("<init>") &&
-                desc.equals("([Ljava/lang/String;)V");
-        boolean processStartCondition = owner.equals("java/lang/ProcessBuilder") && name.equals("start") &&
-                desc.equals("()Ljava/lang/Process;");
-        boolean groovyCondition = owner.equals("groovy/lang/GroovyShell") && name.equals("evaluate") &&
-                desc.equals("(Ljava/lang/String;)Ljava/lang/Object;");
+        boolean slf4jCondition = owner.equals("org/slf4j/Logger") &&
+                (name.equals("info") || name.equals("warn") || name.equals("error"));
+        boolean log4jCondition = owner.equals("org/apache/logging/log4j/Logger") &&
+                (name.equals("info") || name.equals("warn") || name.equals("error"));
 
         if (buildStrCondition) {
             if (operandStack.get(0).contains(true) ||
@@ -79,30 +74,23 @@ public class RCEMethodAdapter extends CoreMethodAdapter<Boolean> {
                 return;
             }
         }
-        if (processInitCondition || toStringCondition) {
+        if (toStringCondition) {
             if (operandStack.get(0).contains(true)) {
                 super.visitMethodInsn(opcode, owner, name, desc, itf);
                 operandStack.set(0, true);
                 return;
             }
         }
-        if (runtimeCondition) {
+        if (slf4jCondition) {
             if (operandStack.get(0).contains(true)) {
-                pass.put("RUNTIME", true);
+                pass.put("SLF4J", true);
                 super.visitMethodInsn(opcode, owner, name, desc, itf);
                 return;
             }
         }
-        if (processStartCondition) {
+        if(log4jCondition){
             if (operandStack.get(0).contains(true)) {
-                pass.put("PROCESS", true);
-                super.visitMethodInsn(opcode, owner, name, desc, itf);
-                return;
-            }
-        }
-        if (groovyCondition) {
-            if (operandStack.get(0).contains(true)) {
-                pass.put("GROOVY", true);
+                pass.put("LOG4J", true);
                 super.visitMethodInsn(opcode, owner, name, desc, itf);
                 return;
             }

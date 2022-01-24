@@ -122,7 +122,7 @@ public class Application {
         } else {
             String module = command.module.toUpperCase(Locale.ROOT);
             if (module.contains("ALL")) {
-                module = "SSRF|SQLI|XXE|RCE|DOS|REDIRECT";
+                module = "SSRF|SQLI|XXE|RCE|DOS|REDIRECT|LOG";
             }
             if (module.contains("SSRF")) {
                 SSRFService.start(classFileByName, controllers, graphCallMap);
@@ -143,6 +143,10 @@ public class Application {
             if (module.contains("DOS")) {
                 DOSService.start(classFileByName, controllers, graphCallMap);
                 resultInfos.addAll(DOSService.getResults());
+            }
+            if (module.contains("LOG")) {
+                LogService.start(classFileByName, controllers, graphCallMap);
+                resultInfos.addAll(LogService.getResults());
             }
             if (module.contains("REDIRECT")) {
                 RedirectService.start(classFileByName, controllers);
