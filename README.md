@@ -1,10 +1,14 @@
 # SpringInspector
 
-![](/img/1.png)
+![](https://img.shields.io/badge/build-passing-brightgreen)
+![](https://img.shields.io/badge/ASM-9.2-blue)
+![](https://img.shields.io/badge/Java-8-red)
 
 一个Java自动代码审计工具，尤其针对Spring框架，也可自行改造以适配其他情况
 
 能够生成方法调用关系图（CallGraph）并模拟JVM栈帧实现简单的数据流分析
+
+![](/img/1.png)
 
 支持漏洞类型：
 
