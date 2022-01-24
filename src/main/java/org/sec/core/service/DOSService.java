@@ -2,6 +2,7 @@ package org.sec.core.service;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Type;
+import org.sec.core.asm.DOSClassVisitor;
 import org.sec.core.asm.XXEClassVisitor;
 import org.sec.core.spring.SpringController;
 import org.sec.core.spring.SpringMapping;
@@ -17,9 +18,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-
 @SLF4J
-public class XXEService {
+public class DOSService {
     private static Logger logger;
 
     private static Map<MethodReference.Handle, Set<CallGraph>> allCalls;
@@ -33,7 +33,7 @@ public class XXEService {
         allCalls = discoveredCalls;
         classFileMap = classFileByName;
 
-        logger.info("start analysis xxe");
+        logger.info("start analysis dos");
         for (SpringController controller : controllers) {
             for (SpringMapping mapping : controller.getMappings()) {
                 MethodReference methodReference = mapping.getMethodReference();
@@ -46,9 +46,7 @@ public class XXEService {
                 argTypes = extendedArgTypes;
                 boolean[] vulnerableIndex = new boolean[argTypes.length];
                 for (int i = 1; i < argTypes.length; i++) {
-                    if (argTypes[i].getClassName().equals("java.lang.String")) {
-                        vulnerableIndex[i] = true;
-                    }
+                    vulnerableIndex[i] = true;
                 }
                 Set<CallGraph> calls = allCalls.get(methodReference.getHandle());
                 if (calls == null || calls.size() == 0) {
@@ -89,74 +87,51 @@ public class XXEService {
                 return;
             }
             ClassReader cr = new ClassReader(file.getFile());
-            XXEClassVisitor cv = new XXEClassVisitor(targetMethod, targetIndex);
+            DOSClassVisitor cv = new DOSClassVisitor(targetMethod, targetIndex);
             cr.accept(cv, ClassReader.EXPAND_FRAMES);
-            if (cv.getPass("SAX-BUILDER") != null && cv.getPass("SAX-BUILDER")) {
+            if (cv.getPass("RE-DOS") != null && cv.getPass("RE-DOS")) {
                 ResultInfo resultInfo = new ResultInfo();
                 resultInfo.setRisk(ResultInfo.MID_RISK);
-                resultInfo.setVulName("SAX BUILDER XXE");
+                resultInfo.setVulName("RE DOS");
                 resultInfo.getChains().addAll(tempChain);
                 results.add(resultInfo);
-                logger.info("detect sax builder xxe");
+                logger.info("detect re dos");
                 System.out.println(resultInfo);
             }
-            if (cv.getPass("SAX-PARSER") != null && cv.getPass("SAX-PARSER")) {
+            if (cv.getPass("ARRAY-DOS") != null && cv.getPass("ARRAY-DOS")) {
                 ResultInfo resultInfo = new ResultInfo();
                 resultInfo.setRisk(ResultInfo.MID_RISK);
-                resultInfo.setVulName("SAX PARSER XXE");
+                resultInfo.setVulName("ARRAY DOS");
                 resultInfo.getChains().addAll(tempChain);
                 results.add(resultInfo);
-                logger.info("detect sax parser xxe");
+                logger.info("detect array dos");
                 System.out.println(resultInfo);
             }
-            if (cv.getPass("SAX-TRANSFORMER-FACTORY") != null &&
-                    cv.getPass("SAX-TRANSFORMER-FACTORY")) {
+            if (cv.getPass("FOR-DOS") != null && cv.getPass("FOR-DOS")) {
                 ResultInfo resultInfo = new ResultInfo();
                 resultInfo.setRisk(ResultInfo.MID_RISK);
-                resultInfo.setVulName("SAX TRANSFORMER FACTORY XXE");
+                resultInfo.setVulName("FOR DOS");
                 resultInfo.getChains().addAll(tempChain);
                 results.add(resultInfo);
-                logger.info("detect sax transformer factory xxe");
+                logger.info("detect for dos");
                 System.out.println(resultInfo);
             }
-            if (cv.getPass("SCHEMA-FACTORY") != null &&
-                    cv.getPass("SCHEMA-FACTORY")) {
+            if (cv.getPass("LIST-DOS") != null && cv.getPass("LIST-DOS")) {
                 ResultInfo resultInfo = new ResultInfo();
                 resultInfo.setRisk(ResultInfo.MID_RISK);
-                resultInfo.setVulName("SCHEMA FACTORY XXE");
+                resultInfo.setVulName("LIST DOS");
                 resultInfo.getChains().addAll(tempChain);
                 results.add(resultInfo);
-                logger.info("detect schema factory xxe");
+                logger.info("detect list dos");
                 System.out.println(resultInfo);
             }
-            if (cv.getPass("TRANSFORMER-FACTORY") != null &&
-                    cv.getPass("TRANSFORMER-FACTORY")) {
+            if (cv.getPass("MAP-DOS") != null && cv.getPass("MAP-DOS")) {
                 ResultInfo resultInfo = new ResultInfo();
                 resultInfo.setRisk(ResultInfo.MID_RISK);
-                resultInfo.setVulName("TRANSFORMER FACTORY XXE");
+                resultInfo.setVulName("MAP DOS");
                 resultInfo.getChains().addAll(tempChain);
                 results.add(resultInfo);
-                logger.info("detect transformer factory xxe");
-                System.out.println(resultInfo);
-            }
-            if (cv.getPass("VALIDATOR") != null &&
-                    cv.getPass("VALIDATOR")) {
-                ResultInfo resultInfo = new ResultInfo();
-                resultInfo.setRisk(ResultInfo.MID_RISK);
-                resultInfo.setVulName("VALIDATOR XXE");
-                resultInfo.getChains().addAll(tempChain);
-                results.add(resultInfo);
-                logger.info("detect validator xxe");
-                System.out.println(resultInfo);
-            }
-            if (cv.getPass("XML-READER") != null &&
-                    cv.getPass("XML-READER")) {
-                ResultInfo resultInfo = new ResultInfo();
-                resultInfo.setRisk(ResultInfo.MID_RISK);
-                resultInfo.setVulName("XML READER XXE");
-                resultInfo.getChains().addAll(tempChain);
-                results.add(resultInfo);
-                logger.info("detect xml reader xxe");
+                logger.info("detect map dos");
                 System.out.println(resultInfo);
             }
         } catch (Exception e) {

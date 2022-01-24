@@ -121,6 +121,9 @@ public class Application {
             logger.warn("no module selected");
         } else {
             String module = command.module.toUpperCase(Locale.ROOT);
+            if (module.contains("ALL")) {
+                module = "SSRF|SQLI|XXE|RCE|DOS";
+            }
             if (module.contains("SSRF")) {
                 SSRFService.start(classFileByName, controllers, graphCallMap);
                 resultInfos.addAll(SSRFService.getResults());
@@ -137,8 +140,12 @@ public class Application {
                 RCEService.start(classFileByName, controllers, graphCallMap);
                 resultInfos.addAll(RCEService.getResults());
             }
+            if (module.contains("DOS")) {
+                DOSService.start(classFileByName,controllers,graphCallMap);
+                resultInfos.addAll(DOSService.getResults());
+            }
         }
-        System.out.println("total data: " + resultInfos.size());
+        logger.info("total results: " + resultInfos.size());
         logger.info("delete temp dirs...");
     }
 

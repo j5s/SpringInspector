@@ -20,6 +20,7 @@
 - 服务器端请求伪造漏洞检测
 - XML外部实体注入漏洞检测
 - 远程命令执行漏洞检测
+- 针对Java的拒绝服务漏洞检测
 
 ## 快速上手
 
@@ -138,3 +139,19 @@ Sink方法的参数有多种重载，已针对这些类型做处理（污点传�
 
 1. 简单的命令执行，判断整条链中参数是否能进入危险方法
 2. 其中`ProcessBuilder`类初始化需要处理数组情况的污点传递
+
+## DOS
+
+开启检测模块关键字：DOS
+
+|    漏洞名    |                漏洞细节                |
+|:---------:|:----------------------------------:|
+|  RE DOS   |      Pattern.matches(str,str)      |
+|  FOR DOS  |       for(int i=0;i<int;i++)       |
+| ARRAY DOS | object[] array = new object\[int\] |
+| LIST DOS  |   List list = new ArrayList(int)   |
+|  MAP DOS  |     Map map = new HashMap(int)     |
+
+检测说明：
+1. 其中的`RE DOS`模块曾发现某开源组件的`RE DOS`([参考文章](https://4ra1n.love/post/TVE_41PT3/))
+2. 如果传入的参数是`int`类型且作为数组或集合的初始化长度认为可能存在拒绝服务
