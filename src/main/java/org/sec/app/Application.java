@@ -124,8 +124,10 @@ public class Application {
             if (module.contains("SSRF")) {
                 SSRFService.start(classFileByName, controllers, graphCallMap);
                 resultInfos.addAll(SSRFService.getResults());
-            } else {
-                logger.error("error module");
+            }
+            if (module.contains("SQLI")) {
+                SqlInjectService.start(classFileByName, controllers, graphCallMap);
+                resultInfos.addAll(SqlInjectService.getResults());
             }
         }
         System.out.println("total data: " + resultInfos.size());
