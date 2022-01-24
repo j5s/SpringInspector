@@ -28,6 +28,8 @@
 
 示例：针对我写好的 [靶机](https://github.com/EmYiQing/CIDemo) 进行SSRF漏洞的检测
 
+配置靶机下载地址：[CIDemo](https://github.com/EmYiQing/CIDemo/releases/download/1.0/CIDemo.jar)
+
 命令：`java -jar SpringInspector.jar cidemo.jar --springboot --package org.sec --module SSRF`
 
 该工具扫描速度极快，只需要几秒，将会扫描到以下四条链
@@ -72,6 +74,7 @@ Okhttp SSRF
 |   --debug    |   设置使用调试模式（保存一些临时数据）    | Boolean |  否   |
 |    --jdk     | 加入JDK中的rj.jar进行分析（可能耗时） | Boolean |  否   |
 |    --all     | 加入SpringBoot的其他依赖（可能耗时） | Boolean |  否   |
+|   --output   | 漏洞报告输出文件（默认result.txt）  | String  |  否   |
 
 注意：
 
@@ -156,7 +159,7 @@ Sink方法的参数有多种重载，已针对这些类型做处理（污点传�
 
 检测说明：
 
-1. 其中的`RE DOS`模块曾发现某开源组件的`RE DOS`([参考文章](https://4ra1n.love/post/TVE_41PT3/))
+1. 其中的`RE DOS`模块曾经发现某开源组件的`RE DOS`([参考文章](https://4ra1n.love/post/TVE_41PT3/))
 2. 如果传入的参数是`int`类型且作为数组或集合的初始化长度认为可能存在拒绝服务
 
 ## URL重定向
@@ -192,3 +195,35 @@ Sink方法的参数有多种重载，已针对这些类型做处理（污点传�
 1. 关于日志注入的说明参考：[OWASP](https://owasp.org/www-community/attacks/Log_Injection)
 2. 需要处理可能存在的字符串拼接问题
 
+## 优点
+
+该项目的优点如下：
+
+1. 速度较快，一次分析大致需要几秒，曾经`CodeInspector`跑一次需要三分钟以上
+2. 不依赖于源码，直接提供SpringBoot的Jar基于字节码分析
+3. 实现了简单的数据流分析和模拟栈帧的动态分析，不同于传统的正则等方式
+4. ......（后续补充）
+
+## 缺陷
+
+缺陷有很多，大概如下：
+
+1. 没有加入返回值的分析
+2. 目前判断规则比较直接，应该参考实际的项目改善
+3. 污点传递比较简单，应该结合实际情况改善
+4. 仅针对于SpringMVC的Source，可以加入Servlet等情况
+5. 数据流分析并不是真正的数据流分析，是一种快速简单但不准确的分析
+6. ......（后续补充）
+
+## 参考
+
+关于栈帧分析我写了五篇文章
+
+1. 我的博客：[4ra1n](https://4ra1n.love/)
+2. [深入分析GadgetInspector核心代码](https://xz.aliyun.com/t/10363)
+3. [Java自动代码审计工具实现](https://xz.aliyun.com/t/10433)
+4. [详解Java自动代码审计工具实现](https://tttang.com/archive/1334/)
+5. [基于污点分析的JSP Webshell检测](https://xz.aliyun.com/t/10622)
+6. [加载恶意字节码Webshell的检测](https://xz.aliyun.com/t/10636)
+
+## 是
