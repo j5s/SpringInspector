@@ -76,14 +76,8 @@ public class SSRFMethodAdapter extends CoreMethodAdapter<Boolean> {
                 owner.equals("okhttp/Call")) && name.equals("execute") &&
                 (desc.equals("()Lokhttp3/Response;") || desc.equals("()Lokhttp/Response;"));
 
-        if (urlCondition) {
-            if (operandStack.get(0).contains(true)) {
-                super.visitMethodInsn(opcode, owner, name, desc, itf);
-                operandStack.set(0, true);
-                return;
-            }
-        }
-        if (urlOpenCondition) {
+        if (urlCondition || urlOpenCondition || apacheHttpInitCondition ||
+                okhttpUrlCondition || okhttpBuildCondition || okhttpNewCallCondition) {
             if (operandStack.get(0).contains(true)) {
                 super.visitMethodInsn(opcode, owner, name, desc, itf);
                 operandStack.set(0, true);
@@ -93,20 +87,14 @@ public class SSRFMethodAdapter extends CoreMethodAdapter<Boolean> {
         if (urlInputCondition) {
             if (operandStack.get(0).contains(true)) {
                 pass.put("JDK", true);
-                return;
-            }
-        }
-
-        if (apacheHttpInitCondition) {
-            if (operandStack.get(0).contains(true)) {
                 super.visitMethodInsn(opcode, owner, name, desc, itf);
-                operandStack.set(0, true);
                 return;
             }
         }
         if (apacheHttpExecuteCondition) {
             if (operandStack.get(0).contains(true)) {
                 pass.put("APACHE", true);
+                super.visitMethodInsn(opcode, owner, name, desc, itf);
                 return;
             }
         }
@@ -122,34 +110,14 @@ public class SSRFMethodAdapter extends CoreMethodAdapter<Boolean> {
         if (socketInputCondition) {
             if (operandStack.get(0).contains(true)) {
                 pass.put("SOCKET", true);
-                return;
-            }
-        }
-
-        if (okhttpUrlCondition) {
-            if (operandStack.get(0).contains(true)) {
                 super.visitMethodInsn(opcode, owner, name, desc, itf);
-                operandStack.set(0, true);
-                return;
-            }
-        }
-        if (okhttpBuildCondition) {
-            if (operandStack.get(0).contains(true)) {
-                super.visitMethodInsn(opcode, owner, name, desc, itf);
-                operandStack.set(0, true);
-                return;
-            }
-        }
-        if (okhttpNewCallCondition) {
-            if (operandStack.get(0).contains(true)) {
-                super.visitMethodInsn(opcode, owner, name, desc, itf);
-                operandStack.set(0, true);
                 return;
             }
         }
         if (okhttpExecuteCondition) {
             if (operandStack.get(0).contains(true)) {
                 pass.put("OKHTTP", true);
+                super.visitMethodInsn(opcode, owner, name, desc, itf);
                 return;
             }
         }

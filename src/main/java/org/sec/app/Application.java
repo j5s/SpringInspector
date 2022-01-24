@@ -129,6 +129,10 @@ public class Application {
                 SqlInjectService.start(classFileByName, controllers, graphCallMap);
                 resultInfos.addAll(SqlInjectService.getResults());
             }
+            if (module.contains("XXE")) {
+                XXEService.start(classFileByName, controllers, graphCallMap);
+                resultInfos.addAll(XXEService.getResults());
+            }
         }
         System.out.println("total data: " + resultInfos.size());
         logger.info("delete temp dirs...");

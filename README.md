@@ -8,18 +8,54 @@
 
 提供一个SpringBoot的Jar包即可进行自动代码审计，底层技术基于字节码分析
 
-能够生成方法调用关系图（CallGraph）并模拟JVM栈帧实现简单的数据流分析
+能够生成跨越接口和实现的方法调用关系图（CallGraph）并模拟JVM栈帧实现简单的数据流分析
+
+注意：该工具不能确定存在漏洞，只能证明某条调用链上存在危险操作，所以建议结合人工做进一步分析
 
 ![](/img/1.png)
 
 支持漏洞类型：
 
-- SSRF检测
 - SQL注入检测
+- 服务器端请求伪造漏洞检测
+- XML外部实体注入漏洞检测
 
-## 使用
+## 快速上手
 
-示例：`java -jar SpringInspector.jar boot.jar --springboot --package org.sec --module SSRF|SQLI`
+示例：针对我写好的 [靶机](https://github.com/EmYiQing/CIDemo) 进行SSRF漏洞的检测
+
+命令：`java -jar SpringInspector.jar cidemo.jar --springboot --package org.sec --module SSRF`
+
+打印如下：
+
+```text
+......
+14:03:55 [INFO] [SSRFService] start analysis ssrf
+14:03:55 [INFO] [SSRFService] detect jdk ssrf
+JDK SSRF
+	org/sec/cidemo/web/SSRFController.ssrf1
+	org/sec/cidemo/service/SSRFService.ssrf1
+	org/sec/cidemo/service/impl/SSRFServiceImpl.ssrf1
+
+14:03:55 [INFO] [SSRFService] detect apache ssrf
+Apache SSRF
+	org/sec/cidemo/web/SSRFController.ssrf2
+	org/sec/cidemo/service/SSRFService.ssrf2
+	org/sec/cidemo/service/impl/SSRFServiceImpl.ssrf2
+
+14:03:55 [INFO] [SSRFService] detect socket ssrf
+Socket SSRF
+	org/sec/cidemo/web/SSRFController.ssrf3
+	org/sec/cidemo/service/SSRFService.ssrf3
+	org/sec/cidemo/service/impl/SSRFServiceImpl.ssrf3
+
+14:03:55 [INFO] [SSRFService] detect okhttp ssrf
+Okhttp SSRF
+	org/sec/cidemo/web/SSRFController.ssrf4
+	org/sec/cidemo/service/SSRFService.ssrf4
+	org/sec/cidemo/service/impl/SSRFServiceImpl.ssrf4
+......
+```
 
 可选参数说明
 
