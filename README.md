@@ -19,6 +19,7 @@
 - SQL注入检测
 - 服务器端请求伪造漏洞检测
 - XML外部实体注入漏洞检测
+- 远程命令执行漏洞检测
 
 ## 快速上手
 
@@ -122,3 +123,18 @@ Sink方法的参数有多种重载，已针对这些类型做处理（污点传�
 3. `java/io/FileInputStream`
 4. `org/xml/sax/InputSource`
 5. `javax/xml/transform/stream/StreamSource`
+
+## RCE
+
+开启检测模块关键字：RCE
+
+|          Sink类           |  Sink方法  |
+|:------------------------:|:--------:|
+|    java/lang/Runtime     |   exec   |
+| java/lang/ProcessBuilder |  start   |
+| groovy/lang/GroovyShell  | evaluate |
+
+检测说明：
+
+1. 简单的命令执行，判断整条链中参数是否能进入危险方法
+2. 其中`ProcessBuilder`类初始化需要处理数组情况的污点传递

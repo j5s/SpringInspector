@@ -133,6 +133,10 @@ public class Application {
                 XXEService.start(classFileByName, controllers, graphCallMap);
                 resultInfos.addAll(XXEService.getResults());
             }
+            if (module.contains("RCE")) {
+                RCEService.start(classFileByName, controllers, graphCallMap);
+                resultInfos.addAll(RCEService.getResults());
+            }
         }
         System.out.println("total data: " + resultInfos.size());
         logger.info("delete temp dirs...");
