@@ -6,24 +6,24 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.commons.JSRInlinerAdapter;
 import org.sec.model.MethodReference;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class SimpleSSRFClassVisitor extends ClassVisitor {
     private String name;
     private final MethodReference.Handle methodHandle;
     private final int methodArgIndex;
-    private final List<Boolean> pass;
+    private final Map<String,Boolean> pass;
 
     public SimpleSSRFClassVisitor(MethodReference.Handle targetMethod, int targetIndex) {
         super(Opcodes.ASM6);
         this.methodHandle = targetMethod;
         this.methodArgIndex = targetIndex;
-        this.pass = new ArrayList<>();
+        this.pass = new HashMap<>();
     }
 
-    public List<Boolean> getPass() {
-        return pass;
+    public Boolean getPass(String key) {
+        return pass.get(key);
     }
 
     @Override

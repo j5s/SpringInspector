@@ -91,13 +91,22 @@ public class SSRFService {
             ClassReader cr = new ClassReader(file.getFile());
             SimpleSSRFClassVisitor cv = new SimpleSSRFClassVisitor(targetMethod, targetIndex);
             cr.accept(cv, ClassReader.EXPAND_FRAMES);
-            if (cv.getPass().size() == 3 && !cv.getPass().contains(false)) {
+            if (cv.getPass("JDK") != null && cv.getPass("JDK")) {
                 ResultInfo resultInfo = new ResultInfo();
                 resultInfo.setRisk(ResultInfo.MID_RISK);
                 resultInfo.setVulName("JDK SSRF");
                 resultInfo.getChains().addAll(tempChain);
                 results.add(resultInfo);
-                logger.info("detect ssrf");
+                logger.info("detect jdk ssrf");
+                System.out.println(resultInfo);
+            }
+            if (cv.getPass("APACHE") != null && cv.getPass("APACHE")) {
+                ResultInfo resultInfo = new ResultInfo();
+                resultInfo.setRisk(ResultInfo.MID_RISK);
+                resultInfo.setVulName("Apache SSRF");
+                resultInfo.getChains().addAll(tempChain);
+                results.add(resultInfo);
+                logger.info("detect apache ssrf");
                 System.out.println(resultInfo);
             }
         } catch (Exception e) {

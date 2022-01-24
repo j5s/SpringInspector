@@ -5,16 +5,15 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.sec.core.jvm.CoreMethodAdapter;
 
-import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 public class SimpleSSRFMethodAdapter extends CoreMethodAdapter<Boolean> {
     private final int access;
     private final String desc;
     private final int methodArgIndex;
-    private final List<Boolean> pass;
+    private final Map<String, Boolean> pass;
 
-    public SimpleSSRFMethodAdapter(int methodArgIndex, List<Boolean> pass, int api, MethodVisitor mv,
+    public SimpleSSRFMethodAdapter(int methodArgIndex, Map<String, Boolean> pass, int api, MethodVisitor mv,
                                    String owner, int access, String name, String desc) {
         super(api, mv, owner, access, name, desc);
         this.access = access;
@@ -49,32 +48,21 @@ public class SimpleSSRFMethodAdapter extends CoreMethodAdapter<Boolean> {
                 desc.equals("()Ljava/net/URLConnection;");
         boolean urlInputCondition = owner.equals("java/net/HttpURLConnection") &&
                 name.equals("getInputStream") && desc.equals("()Ljava/io/InputStream;");
-
-        boolean isTaint = false;
-        Type[] argTypes = Type.getArgumentTypes(desc);
+        boolean apacheHttpInitCondition = owner.equals("org/apache/http/client/methods/HttpGet") &&
+                name.equals("<init>") && desc.equals("(Ljava/lang/String;)V");
+        boolean apacheHttpExecuteCondition = owner.equals("org/apache/http/impl/client/CloseableHttpClient") &&
+                name.equals("execute") && desc.equals("(Lorg/apache/http/client/methods/HttpUriRequest;)" +
+                "Lorg/apache/http/client/methods/CloseableHttpResponse;");
 
         if (urlCondition) {
-            int stackIndex = 0;
-            for (int i = 0; i < argTypes.length; i++) {
-                int argIndex = argTypes.length - 1 - i;
-                Type type = argTypes[argIndex];
-                Set<Boolean> taint = operandStack.get(stackIndex);
-                if (taint.size() > 0 && taint.contains(true)) {
-                    isTaint = true;
-                    pass.add(true);
-                    break;
-                }
-                stackIndex += type.getSize();
-            }
-            super.visitMethodInsn(opcode, owner, name, desc, itf);
-            if (isTaint) {
+            if (operandStack.get(0).contains(true)) {
+                super.visitMethodInsn(opcode, owner, name, desc, itf);
                 operandStack.set(0, true);
+                return;
             }
-            return;
         }
         if (urlOpenCondition) {
             if (operandStack.get(0).contains(true)) {
-                pass.add(true);
                 super.visitMethodInsn(opcode, owner, name, desc, itf);
                 operandStack.set(0, true);
                 return;
@@ -82,7 +70,21 @@ public class SimpleSSRFMethodAdapter extends CoreMethodAdapter<Boolean> {
         }
         if (urlInputCondition) {
             if (operandStack.get(0).contains(true)) {
-                pass.add(true);
+                pass.put("JDK", true);
+                return;
+            }
+        }
+
+        if (apacheHttpInitCondition) {
+            if (operandStack.get(0).contains(true)) {
+                super.visitMethodInsn(opcode, owner, name, desc, itf);
+                operandStack.set(0, true);
+                return;
+            }
+        }
+        if (apacheHttpExecuteCondition) {
+            if (operandStack.get(0).contains(true)) {
+                pass.put("APACHE", true);
                 return;
             }
         }

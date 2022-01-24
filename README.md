@@ -6,6 +6,8 @@
 
 一个Java自动代码审计工具，尤其针对Spring框架，也可自行改造以适配其他情况
 
+提供一个SpringBoot的Jar包即可进行自动代码审计，底层技术基于字节码分析
+
 能够生成方法调用关系图（CallGraph）并模拟JVM栈帧实现简单的数据流分析
 
 ![](/img/1.png)
@@ -38,6 +40,25 @@
 - 项目包名参数必须设置（例如`org.sec`或`com.xxx`等）
 - 可选检测模块用`|`分割可包含多个（例如`--module SSRF|SQLI`）
 
-## SSRF
+## SQL注入
 
-检测关键字
+开启检测模块关键字：SQLI
+
+|                   Sink类                    |     Sink方法     |
+|:------------------------------------------:|:--------------:|
+|             java/sql/Statement             |    execute     |
+|             java/sql/Statement             |  executeQuery  |
+|             java/sql/Statement             | executeUpdate  |
+| org/springframework/jdbc/core/JdbcTemplate |     update     |
+| org/springframework/jdbc/core/JdbcTemplate |    execute     |
+| org/springframework/jdbc/core/JdbcTemplate |     query      |
+| org/springframework/jdbc/core/JdbcTemplate | queryForStream |
+| org/springframework/jdbc/core/JdbcTemplate |  queryForList  |
+| org/springframework/jdbc/core/JdbcTemplate |  queryForMap   |
+| org/springframework/jdbc/core/JdbcTemplate | queryForObject |
+
+检测说明：
+
+1. Source是Controller输入的String型请求参数
+2. 该参数通过字符串拼接得到了SQL语句
+3. SQL语句进入了Sink方法
