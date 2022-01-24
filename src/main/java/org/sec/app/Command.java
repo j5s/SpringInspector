@@ -28,4 +28,7 @@ public class Command {
 
     @Parameter(names = {"--all"}, description = "Use All Libs")
     public boolean lib;
+
+    @Parameter(names = {"--output"}, description = "Output Report File")
+    public String path;
 }

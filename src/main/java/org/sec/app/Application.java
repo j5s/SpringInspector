@@ -7,6 +7,7 @@ import org.sec.core.service.*;
 import org.sec.core.spring.SpringController;
 import org.sec.core.util.ClassUtil;
 import org.sec.data.Output;
+import org.sec.data.ResultOutput;
 import org.sec.log.SLF4J;
 import org.sec.model.*;
 import org.slf4j.Logger;
@@ -154,6 +155,7 @@ public class Application {
             }
         }
         logger.info("total results: " + resultInfos.size());
+        ResultOutput.write(command.path,resultInfos);
         logger.info("delete temp dirs...");
     }
 
