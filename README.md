@@ -217,7 +217,7 @@ Sink方法的参数有多种重载，已针对这些类型做处理（污点传�
 
 ## 参考
 
-关于栈帧分析我写了五篇文章
+关于该工具原理我写了五篇文章
 
 1. 我的博客：[4ra1n](https://4ra1n.love/)
 2. [深入分析GadgetInspector核心代码](https://xz.aliyun.com/t/10363)
@@ -226,4 +226,8 @@ Sink方法的参数有多种重载，已针对这些类型做处理（污点传�
 5. [基于污点分析的JSP Webshell检测](https://xz.aliyun.com/t/10622)
 6. [加载恶意字节码Webshell的检测](https://xz.aliyun.com/t/10636)
 
-## 是
+## 其他
+
+- 欢迎大佬们提出建议和意见
+- 二次开发请注明来自于：[4ra1n](https://github.com/EmYiQing)
+- 工具仅用于安全研究，使用工具造成的任何后果使用者负责，与作者无关
