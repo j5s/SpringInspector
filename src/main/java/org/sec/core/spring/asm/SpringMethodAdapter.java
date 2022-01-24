@@ -42,7 +42,9 @@ public class SpringMethodAdapter extends MethodVisitor {
     @Override
     public AnnotationVisitor visitAnnotation(String descriptor, boolean visible) {
         AnnotationVisitor av = super.visitAnnotation(descriptor, visible);
-        if (descriptor.equals(SpringConstant.RequestMappingAnno)) {
+        if (descriptor.equals(SpringConstant.RequestMappingAnno) ||
+                descriptor.equals(SpringConstant.GetMappingAnno) ||
+                descriptor.equals(SpringConstant.PostMappingAnno)) {
             currentMapping = new SpringMapping();
             currentMapping.setMethodName(new MethodReference.Handle(
                     new ClassReference.Handle(this.owner), this.name, this.desc));
