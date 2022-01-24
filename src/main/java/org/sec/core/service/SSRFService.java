@@ -2,7 +2,7 @@ package org.sec.core.service;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Type;
-import org.sec.core.asm.SimpleSSRFClassVisitor;
+import org.sec.core.asm.SSRFClassVisitor;
 import org.sec.core.spring.SpringController;
 import org.sec.core.spring.SpringMapping;
 import org.sec.log.SLF4J;
@@ -89,7 +89,7 @@ public class SSRFService {
                 return;
             }
             ClassReader cr = new ClassReader(file.getFile());
-            SimpleSSRFClassVisitor cv = new SimpleSSRFClassVisitor(targetMethod, targetIndex);
+            SSRFClassVisitor cv = new SSRFClassVisitor(targetMethod, targetIndex);
             cr.accept(cv, ClassReader.EXPAND_FRAMES);
             if (cv.getPass("JDK") != null && cv.getPass("JDK")) {
                 ResultInfo resultInfo = new ResultInfo();

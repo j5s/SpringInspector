@@ -7,14 +7,14 @@ import org.sec.core.jvm.CoreMethodAdapter;
 
 import java.util.Map;
 
-public class SimpleSSRFMethodAdapter extends CoreMethodAdapter<Boolean> {
+public class SSRFMethodAdapter extends CoreMethodAdapter<Boolean> {
     private final int access;
     private final String desc;
     private final int methodArgIndex;
     private final Map<String, Boolean> pass;
 
-    public SimpleSSRFMethodAdapter(int methodArgIndex, Map<String, Boolean> pass, int api, MethodVisitor mv,
-                                   String owner, int access, String name, String desc) {
+    public SSRFMethodAdapter(int methodArgIndex, Map<String, Boolean> pass, int api, MethodVisitor mv,
+                             String owner, int access, String name, String desc) {
         super(api, mv, owner, access, name, desc);
         this.access = access;
         this.desc = desc;

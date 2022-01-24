@@ -9,13 +9,13 @@ import org.sec.model.MethodReference;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SimpleSSRFClassVisitor extends ClassVisitor {
+public class SSRFClassVisitor extends ClassVisitor {
     private String name;
     private final MethodReference.Handle methodHandle;
     private final int methodArgIndex;
     private final Map<String,Boolean> pass;
 
-    public SimpleSSRFClassVisitor(MethodReference.Handle targetMethod, int targetIndex) {
+    public SSRFClassVisitor(MethodReference.Handle targetMethod, int targetIndex) {
         super(Opcodes.ASM6);
         this.methodHandle = targetMethod;
         this.methodArgIndex = targetIndex;
@@ -38,7 +38,7 @@ public class SimpleSSRFClassVisitor extends ClassVisitor {
                                      String signature, String[] exceptions) {
         MethodVisitor mv = super.visitMethod(access, name, descriptor, signature, exceptions);
         if (name.equals(this.methodHandle.getName())) {
-            SimpleSSRFMethodAdapter ssrfMethodAdapter = new SimpleSSRFMethodAdapter(
+            SSRFMethodAdapter ssrfMethodAdapter = new SSRFMethodAdapter(
                     this.methodArgIndex, this.pass, Opcodes.ASM6, mv,
                     this.name, access, name, descriptor);
             return new JSRInlinerAdapter(ssrfMethodAdapter,
