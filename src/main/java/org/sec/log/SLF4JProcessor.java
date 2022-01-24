@@ -3,10 +3,8 @@ package org.sec.log;
 import org.reflections.Reflections;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.net.URL;
 import java.util.*;
 
 public class SLF4JProcessor {
