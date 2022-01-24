@@ -109,6 +109,24 @@ public class SSRFService {
                 logger.info("detect apache ssrf");
                 System.out.println(resultInfo);
             }
+            if (cv.getPass("SOCKET") != null && cv.getPass("SOCKET")) {
+                ResultInfo resultInfo = new ResultInfo();
+                resultInfo.setRisk(ResultInfo.MID_RISK);
+                resultInfo.setVulName("Socket SSRF");
+                resultInfo.getChains().addAll(tempChain);
+                results.add(resultInfo);
+                logger.info("detect socket ssrf");
+                System.out.println(resultInfo);
+            }
+            if (cv.getPass("OKHTTP") != null && cv.getPass("OKHTTP")) {
+                ResultInfo resultInfo = new ResultInfo();
+                resultInfo.setRisk(ResultInfo.MID_RISK);
+                resultInfo.setVulName("Okhttp SSRF");
+                resultInfo.getChains().addAll(tempChain);
+                results.add(resultInfo);
+                logger.info("detect okhttp ssrf");
+                System.out.println(resultInfo);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             return;
