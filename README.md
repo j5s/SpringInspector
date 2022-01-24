@@ -26,7 +26,7 @@
 
 命令：`java -jar SpringInspector.jar cidemo.jar --springboot --package org.sec --module SSRF`
 
-打印如下：
+将会扫描到以下四条链
 
 ```text
 ......
@@ -98,3 +98,27 @@ Okhttp SSRF
 1. Source是Controller输入的String型请求参数
 2. 该参数通过字符串拼接得到了SQL语句
 3. SQL语句进入了Sink方法
+
+## XXE
+
+开启检测模块关键字：XXE
+
+|                     Sink类                     |        Sink方法         |
+|:---------------------------------------------:|:---------------------:|
+|          org/jdom2/input/SAXBuilder           |         build         |
+|          javax/xml/parsers/SAXParser          |         parse         |
+| javax/xml/transform/sax/SAXTransformerFactory | newTransformerHandler |
+|      javax/xml/validation/SchemaFactory       |       newSchema       |
+|        javax/xml/transform/Transformer        |       transform       |
+|        javax/xml/validation/Validator         |       validate        |
+|             org/xml/sax/XMLReader             |         parse         |
+
+检测说明：
+
+Sink方法的参数有多种重载，已针对这些类型做处理（污点传递）
+
+1. `java/lang/String`
+2. `java/io/File`
+3. `java/io/FileInputStream`
+4. `org/xml/sax/InputSource`
+5. `javax/xml/transform/stream/StreamSource`
